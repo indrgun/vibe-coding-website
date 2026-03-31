@@ -1,0 +1,302 @@
+@import "tailwindcss";
+
+:root {
+  --bg-primary: #0a0a1a;
+  --bg-secondary: #111133;
+  --gold: #d4a843;
+  --gold-light: #f0d68a;
+  --text-primary: #f0ead6;
+  --text-secondary: #c9bfa0;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: "Georgia", "Times New Roman", serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* =============================================
+   Nature background — church presentation style
+   ============================================= */
+
+/* Full-screen nature image slide */
+.nature-slide {
+  position: fixed;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  will-change: transform, opacity;
+}
+
+.nature-slide-hidden {
+  opacity: 0;
+  transition: opacity 2s ease-in-out;
+}
+
+.nature-slide-visible {
+  opacity: 1;
+  transition: opacity 2s ease-in-out;
+}
+
+/* Ken Burns — slow zoom & drift (direction A) */
+.ken-burns-a {
+  animation: kenBurnsA 14s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurnsA {
+  0% {
+    transform: scale(1) translate(0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate(-1.5%, -1%);
+  }
+}
+
+/* Ken Burns — opposite direction (direction B) */
+.ken-burns-b {
+  animation: kenBurnsB 14s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurnsB {
+  0% {
+    transform: scale(1.08) translate(1%, 0.5%);
+  }
+  100% {
+    transform: scale(1) translate(-0.5%, -1.5%);
+  }
+}
+
+/* Dark gradient overlay for text contrast */
+.nature-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    rgba(0, 0, 0, 0.15) 30%,
+    rgba(0, 0, 0, 0.2) 60%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
+}
+
+/* Vignette edge darkening */
+.nature-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 3;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+  pointer-events: none;
+}
+
+/* Bokeh / soft lens-flare orbs */
+.bokeh-orb {
+  position: fixed;
+  z-index: 4;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.5) 0%,
+    rgba(255, 230, 180, 0.25) 40%,
+    transparent 70%
+  );
+  filter: blur(6px);
+  animation: bokehFloat ease-in-out infinite alternate;
+}
+
+@keyframes bokehFloat {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: var(--bokeh-start-opacity, 0.06);
+  }
+  50% {
+    transform: translate(10px, -15px) scale(1.15);
+    opacity: var(--bokeh-mid-opacity, 0.12);
+  }
+  100% {
+    transform: translate(-8px, 8px) scale(0.9);
+    opacity: var(--bokeh-start-opacity, 0.06);
+  }
+}
+
+/* Soft descending light rays */
+.light-ray-nature {
+  position: fixed;
+  top: -10%;
+  width: 120px;
+  height: 130%;
+  z-index: 4;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 220, 0.08) 0%,
+    rgba(255, 230, 180, 0.04) 40%,
+    transparent 80%
+  );
+  filter: blur(30px);
+  transform-origin: top center;
+  pointer-events: none;
+  animation: rayFade 10s ease-in-out infinite alternate;
+}
+
+@keyframes rayFade {
+  0% { opacity: 0.2; }
+  100% { opacity: 0.7; }
+}
+
+/* Verse card styles */
+.verse-card {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.2),
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.verse-card:hover {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow:
+    0 0 60px rgba(0, 0, 0, 0.25),
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transform: translateY(-4px);
+}
+
+/* Verse text animation */
+.verse-text-enter {
+  animation: verseReveal 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes verseReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+/* Reference animation */
+.ref-enter {
+  animation: refReveal 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  opacity: 0;
+}
+
+@keyframes refReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Pulse animation for loading */
+.pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Cross icon glow */
+.cross-glow {
+  filter: drop-shadow(0 0 8px rgba(212, 168, 67, 0.5));
+  animation: crossPulse 4s ease-in-out infinite;
+}
+
+@keyframes crossPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(212, 168, 67, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(212, 168, 67, 0.6));
+  }
+}
+
+/* Button styles */
+.btn-golden {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(212, 168, 67, 0.05));
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  color: var(--gold-light);
+  border-radius: 14px;
+  padding: 12px 28px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-golden:hover {
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.25), rgba(212, 168, 67, 0.1));
+  border-color: rgba(212, 168, 67, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 168, 67, 0.15);
+}
+
+.btn-golden:active {
+  transform: translateY(0);
+}
+
+/* Countdown bar */
+.countdown-bar {
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 1px;
+  transition: width 1s linear;
+  box-shadow: 0 0 8px rgba(212, 168, 67, 0.4);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(212, 168, 67, 0.3);
+  border-radius: 3px;
+}
+
+/* Fade transition */
+.fade-out {
+  animation: fadeOut 0.5s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+    filter: blur(4px);
+  }
+}
