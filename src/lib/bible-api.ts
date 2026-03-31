@@ -1,5 +1,26 @@
+// Available English translations from bible-api.com
+export interface Translation {
+  id: string;
+  name: string;
+  short: string;
+}
+
+export const TRANSLATIONS: Translation[] = [
+  { id: "kjv", name: "King James Version", short: "KJV" },
+  { id: "web", name: "World English Bible", short: "WEB" },
+  { id: "asv", name: "American Standard Version", short: "ASV" },
+  { id: "bbe", name: "Bible in Basic English", short: "BBE" },
+  { id: "darby", name: "Darby Bible", short: "DARBY" },
+  { id: "dra", name: "Douay-Rheims 1899", short: "DRA" },
+  { id: "oeb-us", name: "Open English Bible (US)", short: "OEB" },
+  { id: "ylt", name: "Young's Literal Translation", short: "YLT" },
+];
+
+export type TranslationId = string;
+
+export const DEFAULT_TRANSLATION: TranslationId = "web";
+
 // A curated set of Bible verse references to cycle through.
-// bible-api.com supports KJV and allows fetching by reference.
 export const VERSE_POOL = [
   "John 3:16",
   "Psalm 23:1-6",
@@ -61,9 +82,12 @@ export interface BibleVerse {
 
 const API_BASE = "https://bible-api.com";
 
-export async function fetchVerse(reference: string): Promise<BibleVerse> {
+export async function fetchVerse(
+  reference: string,
+  translation: TranslationId = DEFAULT_TRANSLATION,
+): Promise<BibleVerse> {
   const encoded = encodeURIComponent(reference);
-  const res = await fetch(`${API_BASE}/${encoded}?translation=kjv`, {
+  const res = await fetch(`${API_BASE}/${encoded}?translation=${translation}`, {
     next: { revalidate: 0 },
   });
 
@@ -73,10 +97,11 @@ export async function fetchVerse(reference: string): Promise<BibleVerse> {
 
   const data = await res.json();
 
+  const meta = TRANSLATIONS.find((t) => t.id === translation);
   return {
     reference: data.reference,
     text: data.text.trim(),
-    translation_name: data.translation_name || "KJV",
+    translation_name: data.translation_name || meta?.short || translation.toUpperCase(),
   };
 }
 

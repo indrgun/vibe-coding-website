@@ -267,6 +267,43 @@ body {
   transform: translateY(0);
 }
 
+/* Translation picker dropdown */
+.translation-select {
+  appearance: none;
+  background: linear-gradient(135deg, rgba(212, 168, 67, 0.15), rgba(212, 168, 67, 0.05));
+  border: 1px solid rgba(212, 168, 67, 0.3);
+  color: var(--gold-light);
+  border-radius: 14px;
+  padding: 12px 40px 12px 20px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23f0d68a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+.translation-select:hover {
+  background-color: rgba(212, 168, 67, 0.12);
+  border-color: rgba(212, 168, 67, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 168, 67, 0.15);
+}
+
+.translation-select:focus {
+  outline: none;
+  border-color: rgba(212, 168, 67, 0.6);
+  box-shadow: 0 0 0 2px rgba(212, 168, 67, 0.2);
+}
+
+.translation-select option {
+  background: #1a1a2e;
+  color: var(--text-primary);
+  padding: 8px;
+}
+
 /* Countdown bar */
 .countdown-bar {
   height: 2px;

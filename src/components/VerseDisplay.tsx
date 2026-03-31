@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { fetchVerse, getRandomReference, type BibleVerse } from "@/lib/bible-api";
+import {
+  fetchVerse,
+  getRandomReference,
+  TRANSLATIONS,
+  DEFAULT_TRANSLATION,
+  type BibleVerse,
+  type TranslationId,
+} from "@/lib/bible-api";
 
 const INTERVAL_SECONDS = 30;
 
@@ -12,6 +19,7 @@ export default function VerseDisplay() {
   const [transitioning, setTransitioning] = useState(false);
   const [countdown, setCountdown] = useState(INTERVAL_SECONDS);
   const [paused, setPaused] = useState(false);
+  const [translation, setTranslation] = useState<TranslationId>(DEFAULT_TRANSLATION);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentRefRef = useRef<string | undefined>(undefined);
@@ -25,7 +33,7 @@ export default function VerseDisplay() {
       setLoading(true);
       setError(null);
       const ref = getRandomReference(currentRefRef.current);
-      const data = await fetchVerse(ref);
+      const data = await fetchVerse(ref, translation);
       currentRefRef.current = ref;
       setVerse(data);
       setCountdown(INTERVAL_SECONDS);
@@ -36,13 +44,19 @@ export default function VerseDisplay() {
       setLoading(false);
       setTransitioning(false);
     }
-  }, [verse]);
+  }, [verse, translation]);
 
   // Initial load
   useEffect(() => {
     loadVerse(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Re-fetch when translation changes
+  useEffect(() => {
+    if (verse) loadVerse(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [translation]);
 
   // Auto-rotation timer
   useEffect(() => {
@@ -79,6 +93,12 @@ export default function VerseDisplay() {
     setPaused((p) => !p);
   };
 
+  const handleTranslationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTranslation(e.target.value as TranslationId);
+  };
+
+  const currentTranslation = TRANSLATIONS.find((t) => t.id === translation);
+
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12" style={{ zIndex: 10 }}>
       {/* Header */}
@@ -113,7 +133,7 @@ export default function VerseDisplay() {
           </svg>
         </div>
         <p className="text-sm tracking-widest uppercase" style={{ color: "var(--text-secondary)" }}>
-          King James Version
+          {currentTranslation?.name ?? "World English Bible"}
         </p>
       </header>
 
@@ -181,6 +201,18 @@ export default function VerseDisplay() {
         <button className="btn-golden" onClick={togglePause}>
           {paused ? "▶ Resume" : "⏸ Pause"}
         </button>
+        <select
+          className="translation-select"
+          value={translation}
+          onChange={handleTranslationChange}
+          aria-label="Select Bible translation"
+        >
+          {TRANSLATIONS.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.short} — {t.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       {/* Timer info */}
@@ -203,7 +235,7 @@ export default function VerseDisplay() {
         >
           bible-api.com
         </a>{" "}
-        · KJV Translation
+        · {currentTranslation?.short ?? "WEB"} Translation
       </footer>
     </div>
   );
